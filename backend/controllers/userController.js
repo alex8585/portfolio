@@ -113,7 +113,7 @@ const getUsers = asyncHandler(async (req, res) => {
 
   const [results, itemCount] = await Promise.all([
     User.find({}).limit(limit).skip(skip).exec(),
-    User.count({}),
+    User.countDocuments({}),
   ])
 
   //const pageCount = Math.ceil(itemCount / limit)
@@ -155,6 +155,15 @@ const getUserById = asyncHandler(async (req, res) => {
   }
 })
 
+const getUsersByIds = asyncHandler(async (req, res) => {
+  const filter = JSON.parse(req.query.filter)
+  const ids = filter.id
+  const users = await User.find({ _id: { $in: ids } })
+  res.json({
+    data: users,
+  })
+})
+
 // @desc    Update user
 // @route   PUT /api/users/:id
 // @access  Private/Admin
@@ -189,4 +198,5 @@ export {
   deleteUser,
   getUserById,
   updateUser,
+  getUsersByIds,
 }

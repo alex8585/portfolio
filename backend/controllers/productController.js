@@ -5,22 +5,37 @@ import Product from "../models/productModel.js"
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-  const limit = parseInt(req.query.limit) || 1
-  const page = parseInt(req.query.skip) || 1
+  const perPage = parseInt(req.query.perPage) || 1
+  const page = parseInt(req.query.page) || 1
 
-  const keyword = req.query.keyword
-    ? {
-        name: {
-          $regex: req.query.keyword,
-          $options: "i",
-        },
-      }
-    : {}
+  const filter = JSON.parse(req.query.filter)
+  const q = filter.q
 
-  const count = await Product.countDocuments({ ...keyword })
-  const products = await Product.find({ ...keyword })
-    .limit(limit)
-    .skip(limit * (page - 1))
+  const keyword = {}
+
+  if (!q) {
+    if (filter.user) {
+      keyword.user = filter.user
+    }
+
+    for (const property in filter) {
+      if (property == "userId" || property == "user" || q) continue
+      const val = filter[property]
+      keyword[property] = { $regex: `${val}`, $options: "i" }
+    }
+  } else {
+    keyword.$or = [
+      { name: { $regex: `${q}`, $options: "i" } },
+      { brand: { $regex: `${q}`, $options: "i" } },
+      { category: { $regex: `${q}`, $options: "i" } },
+      { description: { $regex: `${q}`, $options: "i" } },
+    ]
+  }
+
+  const count = await Product.countDocuments(keyword)
+  const products = await Product.find(keyword)
+    .limit(perPage)
+    .skip(perPage * (page - 1))
 
   //res.json({ products, page, pages: Math.ceil(count / pageSize) })
 
@@ -48,11 +63,28 @@ const getProductById = asyncHandler(async (req, res) => {
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
 const deleteProduct = asyncHandler(async (req, res) => {
+  let ids = false
+  if (req.query.filter) {
+    const filter = JSON.parse(req.query.filter)
+    ids = filter.id
+  }
+
+  if (ids) {
+    const result = await Product.deleteMany({ _id: { $in: ids } })
+    if (result.ok) {
+      res.json({ data: ["Product removed"] })
+    } else {
+      res.status(404)
+      throw new Error("Product not found")
+    }
+    return
+  }
+
   const product = await Product.findById(req.params.id)
 
   if (product) {
     await product.remove()
-    res.json({ message: "Product removed" })
+    res.json({ data: ["Product removed"] })
   } else {
     res.status(404)
     throw new Error("Product not found")
@@ -63,16 +95,19 @@ const deleteProduct = asyncHandler(async (req, res) => {
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
+  const { name, price, description, brand, category, countInStock, user } =
+    req.body
+
   const product = new Product({
-    name: "Sample name",
-    price: 0,
-    user: req.user._id,
+    name,
+    price,
+    user,
     image: "/images/sample.jpg",
-    brand: "Sample brand",
-    category: "Sample category",
-    countInStock: 0,
+    brand,
+    category,
+    countInStock,
     numReviews: 0,
-    description: "Sample description",
+    description,
   })
 
   const createdProduct = await product.save()
@@ -83,8 +118,16 @@ const createProduct = asyncHandler(async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 const updateProduct = asyncHandler(async (req, res) => {
-  const { name, price, description, image, brand, category, countInStock } =
-    req.body
+  const {
+    name,
+    price,
+    description,
+    image,
+    brand,
+    category,
+    countInStock,
+    user,
+  } = req.body
 
   const product = await Product.findById(req.params.id)
 
@@ -96,7 +139,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     product.brand = brand
     product.category = category
     product.countInStock = countInStock
-
+    product.user = user
     const updatedProduct = await product.save()
     res.json(updatedProduct)
   } else {

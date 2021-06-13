@@ -2,7 +2,17 @@ import { fetchUtils } from "react-admin"
 import { stringify } from "query-string"
 
 const apiUrl = "http://localhost:5000/api"
-const httpClient = fetchUtils.fetchJson
+//const httpClient = fetchUtils.fetchJson
+const token = localStorage.getItem("token")
+
+const httpClient = (url, options = {}) => {
+  if (!options.headers) {
+    options.headers = new Headers({ Accept: "application/json" })
+  }
+
+  options.headers.set("authorization", "Bearer " + token)
+  return fetchUtils.fetchJson(url, options)
+}
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -26,7 +36,6 @@ export default {
     const url = `${apiUrl}/${resource}?${stringify(query)}`
     //const url = `${apiUrl}/test`
     return httpClient(url).then(({ headers, json }) => {
-      //console.log(json)
       return {
         data: json.data,
         total: parseInt(json.total, 10),
@@ -45,7 +54,6 @@ export default {
     }
     const url = `${apiUrl}/${resource}/by-ids/?${stringify(query)}`
     const r = httpClient(url).then(({ json }) => {
-      //console.log(json)
       return { data: json.data }
     })
 
@@ -99,7 +107,6 @@ export default {
     httpClient(`${apiUrl}/${resource}/${params.id}`, {
       method: "DELETE",
     }).then(({ json }) => {
-      ///////
       return { data: json.data }
     }),
 

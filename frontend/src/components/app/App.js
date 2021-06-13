@@ -2,8 +2,6 @@
 import * as React from "react"
 import { Admin, Resource, EditGuesser } from "react-admin"
 
-//import jsonServerProvider from "ra-data-json-server"
-//import { PostList, PostEdit, PostCreate } from "../admin/posts.js"
 import { UserList } from "../admin/users"
 import { ProductList, ProductEdit, ProductCreate } from "../admin/products.js"
 
@@ -12,13 +10,14 @@ import UserIcon from "@material-ui/icons/Group"
 import Dashboard from "../admin/Dashboard.js"
 import authProvider from "../../providers/authProvider"
 import dataProvider from "../../providers/dataProvider"
-
-//const dataProvider = jsonServerProvider("https://jsonplaceholder.typicode.com")
+import customRoutes from "../admin/customRoutes"
 const App = () => (
   <Admin
+    disableTelemetry
     dashboard={Dashboard}
     authProvider={authProvider}
     dataProvider={dataProvider}
+    customRoutes={customRoutes}
   >
     <Resource
       name="products"

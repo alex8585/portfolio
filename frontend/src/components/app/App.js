@@ -1,33 +1,31 @@
-// in src/App.js
 import * as React from "react"
-import { Admin, Resource, EditGuesser } from "react-admin"
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom"
+import Admin from "../admin/Admin"
 
-import { UserList } from "../admin/users"
-import { ProductList, ProductEdit, ProductCreate } from "../admin/products.js"
-
-import ProductIcon from "@material-ui/icons/Book"
-import UserIcon from "@material-ui/icons/Group"
-import Dashboard from "../admin/Dashboard.js"
-import authProvider from "../../providers/authProvider"
-import dataProvider from "../../providers/dataProvider"
-import customRoutes from "../admin/customRoutes"
 const App = () => (
-  <Admin
-    disableTelemetry
-    dashboard={Dashboard}
-    authProvider={authProvider}
-    dataProvider={dataProvider}
-    customRoutes={customRoutes}
-  >
-    <Resource
-      name="products"
-      list={ProductList}
-      edit={ProductEdit}
-      create={ProductCreate}
-      icon={ProductIcon}
-    />
-    <Resource name="users" icon={UserIcon} list={UserList} edit={EditGuesser} />
-  </Admin>
+  <Router>
+    <div>
+      {/* <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
+          <li>
+            <Link to="/users">Users</Link>
+          </li>
+        </ul>
+      </nav> */}
+
+      <Switch>
+        <Route path="/admin" component={Admin}></Route>
+        <Route path="/users">users</Route>
+        <Route path="/">home</Route>
+      </Switch>
+    </div>
+  </Router>
 )
 
 export default App

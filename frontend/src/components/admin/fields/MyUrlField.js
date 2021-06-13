@@ -21,7 +21,6 @@ const MyUrlField = ({ source }) => {
     <a href={record[source]} className={classes.link}>
       {record[source]}
       <LaunchIcon className={classes.icon} />
-      111
     </a>
   ) : null
 }

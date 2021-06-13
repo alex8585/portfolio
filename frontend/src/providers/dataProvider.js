@@ -3,13 +3,12 @@ import { stringify } from "query-string"
 
 const apiUrl = "http://localhost:5000/api"
 //const httpClient = fetchUtils.fetchJson
-const token = localStorage.getItem("token")
 
 const httpClient = (url, options = {}) => {
   if (!options.headers) {
     options.headers = new Headers({ Accept: "application/json" })
   }
-
+  const token = localStorage.getItem("token")
   options.headers.set("authorization", "Bearer " + token)
   return fetchUtils.fetchJson(url, options)
 }

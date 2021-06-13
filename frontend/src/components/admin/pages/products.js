@@ -14,6 +14,7 @@ import {
   Create,
   Filter,
   SimpleList,
+  ChipField,
 } from "react-admin"
 
 const ProductTitle = ({ record }) => {
@@ -63,12 +64,11 @@ export const ProductList = (props) => {
         />
       ) : (
         <Datagrid>
-          {/* <TextField source="id" /> */}
           <TextField source="name" />
           <TextField source="price" />
           <TextField source="brand" />
           <TextField source="countInStock" />
-          <TextField source="category" />
+          <ChipField source="category" />
           <ReferenceField label="User" source="user" reference="users">
             <TextField source="name" />
           </ReferenceField>
@@ -94,15 +94,7 @@ export const ProductEdit = (props) => (
     </SimpleForm>
   </Edit>
 )
-// name,
-//     price,
-//     user,
-//     image: "/images/sample.jpg",
-//     brand,
-//     category,
-//     countInStock,
-//     numReviews: 0,
-//     description,
+
 export const ProductCreate = (props) => (
   <Create {...props}>
     <SimpleForm>

@@ -11,12 +11,14 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email })
 
   if (user && (await user.matchPassword(password))) {
+    const token = generateToken(user._id)
+    console.log(token)
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
-      token: generateToken(user._id),
+      token,
     })
   } else {
     res.status(401)
@@ -108,16 +110,22 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  const limit = parseInt(req.query.limit) ? parseInt(req.query.limit) : 1
-  const skip = parseInt(req.query.skip) ? parseInt(req.query.skip) : 1
+  const perPage = parseInt(req.query.perPage) || 1
+  const page = parseInt(req.query.page) || 1
+
+  //console.log(perPage)
 
   const [results, itemCount] = await Promise.all([
-    User.find({}).limit(limit).skip(skip).exec(),
+    User.find({})
+      .limit(perPage)
+      .skip(perPage * (page - 1))
+      .select("-password")
+      .exec(),
     User.countDocuments({}),
   ])
 
   //const pageCount = Math.ceil(itemCount / limit)
-
+  //console.log(results)
   res.json({
     total: itemCount,
     data: results,

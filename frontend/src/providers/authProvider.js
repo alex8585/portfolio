@@ -12,7 +12,7 @@ const authProvider = {
       method: "POST",
       body: JSON.stringify(data),
     }).then(({ json }) => {
-      console.log(json)
+      //console.log(json)
       localStorage.setItem("username", json.email)
       localStorage.setItem("token", json.token)
       return Promise.resolve()
@@ -20,13 +20,16 @@ const authProvider = {
   },
   // called when the user clicks on the logout button
   logout: () => {
+    //localStorage.removeItem("userInfo")
     localStorage.removeItem("username")
+    localStorage.removeItem("token")
     return Promise.resolve()
   },
   // called when the API returns an error
   checkError: ({ status }) => {
     if (status === 401 || status === 403) {
-      console.log(status)
+      //console.log(status)
+      //localStorage.removeItem("userInfo")
       localStorage.removeItem("username")
       localStorage.removeItem("token")
       return Promise.reject()

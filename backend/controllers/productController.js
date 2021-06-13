@@ -10,6 +10,8 @@ const getProducts = asyncHandler(async (req, res) => {
 
   const filter = JSON.parse(req.query.filter)
   const q = filter.q
+  const direction = req.query.direction
+  const sort = req.query.sort
 
   const keyword = {}
 
@@ -32,10 +34,20 @@ const getProducts = asyncHandler(async (req, res) => {
     ]
   }
 
+  const sortObj = {}
+  if (direction && sort) {
+    if (direction == "ASC") {
+      sortObj[sort] = 1
+    } else {
+      sortObj[sort] = -1
+    }
+  }
+
   const count = await Product.countDocuments(keyword)
   const products = await Product.find(keyword)
     .limit(perPage)
     .skip(perPage * (page - 1))
+    .sort(sortObj)
 
   //res.json({ products, page, pages: Math.ceil(count / pageSize) })
 

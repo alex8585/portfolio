@@ -2,53 +2,14 @@ import asyncHandler from "express-async-handler"
 import Tag from "../models/tagModel.js"
 
 const getTags = asyncHandler(async (req, res) => {
-  const perPage = parseInt(req.query.perPage) || 1
-  const page = parseInt(req.query.page) || 1
+  const { perPage, sortObj, filterObj, skip } = req.mongoParams
 
-  const filter = JSON.parse(req.query.filter)
-  const q = filter.q
-  const direction = req.query.direction
-  const sort = req.query.sort
-
-  const keyword = {}
-
-  if (!q) {
-    if (filter.user) {
-      keyword.user = filter.user
-    }
-
-    for (const property in filter) {
-      if (property == "userId" || property == "user" || q) continue
-      const val = filter[property]
-      keyword[property] = { $regex: `${val}`, $options: "i" }
-    }
-  } else {
-    keyword.$or = [
-      { name: { $regex: `${q}`, $options: "i" } },
-      { brand: { $regex: `${q}`, $options: "i" } },
-      { category: { $regex: `${q}`, $options: "i" } },
-      { description: { $regex: `${q}`, $options: "i" } },
-    ]
-  }
-
-  const sortObj = {}
-  if (direction && sort) {
-    if (direction == "ASC") {
-      sortObj[sort] = 1
-    } else {
-      sortObj[sort] = -1
-    }
-  }
-
-  const count = await Tag.countDocuments(keyword)
-  const tags = await Tag.find(keyword)
-    .limit(perPage)
-    .skip(perPage * (page - 1))
-    .sort(sortObj)
+  const total = await Tag.countDocuments(filterObj)
+  const data = await Tag.find(filterObj).limit(perPage).skip(skip).sort(sortObj)
 
   res.json({
-    total: count,
-    data: tags,
+    total,
+    data,
   })
 })
 

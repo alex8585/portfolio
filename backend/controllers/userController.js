@@ -12,7 +12,6 @@ const authUser = asyncHandler(async (req, res) => {
 
   if (user && (await user.matchPassword(password))) {
     const token = generateToken(user._id)
-    console.log(token)
     res.json({
       _id: user._id,
       name: user.name,
@@ -110,28 +109,22 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  const perPage = parseInt(req.query.perPage) || 1
-  const page = parseInt(req.query.page) || 1
+  const { perPage, sortObj, filterObj, skip } = req.mongoParams
 
-  //console.log(perPage)
-
-  const [results, itemCount] = await Promise.all([
-    User.find({})
+  const [total, data] = await Promise.all([
+    User.countDocuments(filterObj),
+    User.find(filterObj)
       .limit(perPage)
-      .skip(perPage * (page - 1))
+      .skip(skip)
       .select("-password")
+      .sort(sortObj)
       .exec(),
-    User.countDocuments({}),
   ])
 
-  //const pageCount = Math.ceil(itemCount / limit)
-  //console.log(results)
   res.json({
-    total: itemCount,
-    data: results,
+    total,
+    data,
   })
-  //const users = await User.getAll(limit, skip)
-  //res.json(users)
 })
 
 // @desc    Delete user

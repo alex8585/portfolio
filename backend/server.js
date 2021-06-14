@@ -14,6 +14,8 @@ import orderRoutes from "./routes/orderRoutes.js"
 import uploadRoutes from "./routes/uploadRoutes.js"
 import tagRoutes from "./routes/tagRoutes.js"
 import portfolioRoutes from "./routes/portfolioRoutes.js"
+import prepareQuery from "./middleware/prepareQuery.js"
+
 dotenv.config()
 
 connectDB()
@@ -28,6 +30,7 @@ app.use(cors())
 app.use(express.json())
 app.use(paginate.middleware(10, 50))
 
+app.use(prepareQuery)
 app.use("/api/products", productRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/orders", orderRoutes)
@@ -40,6 +43,8 @@ app.get("/api/config/paypal", (req, res) =>
 )
 
 const __dirname = path.resolve()
+
+console.log(path.join(__dirname, "/uploads"))
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")))
 
 if (process.env.NODE_ENV === "production") {

@@ -5,55 +5,17 @@ import Product from "../models/productModel.js"
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-  const perPage = parseInt(req.query.perPage) || 1
-  const page = parseInt(req.query.page) || 1
+  const { perPage, sortObj, filterObj, skip } = req.mongoParams
 
-  const filter = JSON.parse(req.query.filter)
-  const q = filter.q
-  const direction = req.query.direction
-  const sort = req.query.sort
-
-  const keyword = {}
-
-  if (!q) {
-    if (filter.user) {
-      keyword.user = filter.user
-    }
-
-    for (const property in filter) {
-      if (property == "userId" || property == "user" || q) continue
-      const val = filter[property]
-      keyword[property] = { $regex: `${val}`, $options: "i" }
-    }
-  } else {
-    keyword.$or = [
-      { name: { $regex: `${q}`, $options: "i" } },
-      { brand: { $regex: `${q}`, $options: "i" } },
-      { category: { $regex: `${q}`, $options: "i" } },
-      { description: { $regex: `${q}`, $options: "i" } },
-    ]
-  }
-
-  const sortObj = {}
-  if (direction && sort) {
-    if (direction == "ASC") {
-      sortObj[sort] = 1
-    } else {
-      sortObj[sort] = -1
-    }
-  }
-
-  const count = await Product.countDocuments(keyword)
-  const products = await Product.find(keyword)
+  const total = await Product.countDocuments(filterObj)
+  const data = await Product.find(filterObj)
     .limit(perPage)
-    .skip(perPage * (page - 1))
+    .skip(skip)
     .sort(sortObj)
 
-  //res.json({ products, page, pages: Math.ceil(count / pageSize) })
-
   res.json({
-    total: count,
-    data: products,
+    total,
+    data,
   })
 })
 

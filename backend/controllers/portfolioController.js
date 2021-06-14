@@ -2,53 +2,17 @@ import asyncHandler from "express-async-handler"
 import Portfolio from "../models/portfolioModel.js"
 
 const getPortfolios = asyncHandler(async (req, res) => {
-  const perPage = parseInt(req.query.perPage) || 1
-  const page = parseInt(req.query.page) || 1
+  const { perPage, sortObj, filterObj, skip } = req.mongoParams
 
-  const filter = JSON.parse(req.query.filter)
-  const q = filter.q
-  const direction = req.query.direction
-  const sort = req.query.sort
-
-  const keyword = {}
-
-  if (!q) {
-    if (filter.user) {
-      keyword.user = filter.user
-    }
-
-    for (const property in filter) {
-      if (property == "userId" || property == "user" || q) continue
-      const val = filter[property]
-      keyword[property] = { $regex: `${val}`, $options: "i" }
-    }
-  } else {
-    keyword.$or = [
-      { name: { $regex: `${q}`, $options: "i" } },
-      { brand: { $regex: `${q}`, $options: "i" } },
-      { category: { $regex: `${q}`, $options: "i" } },
-      { description: { $regex: `${q}`, $options: "i" } },
-    ]
-  }
-
-  const sortObj = {}
-  if (direction && sort) {
-    if (direction == "ASC") {
-      sortObj[sort] = 1
-    } else {
-      sortObj[sort] = -1
-    }
-  }
-
-  const count = await Portfolio.countDocuments(keyword)
-  const portfolios = await Portfolio.find(keyword)
+  const total = await Portfolio.countDocuments(filterObj)
+  const data = await Portfolio.find(filterObj)
     .limit(perPage)
-    .skip(perPage * (page - 1))
+    .skip(skip)
     .sort(sortObj)
 
   res.json({
-    total: count,
-    data: portfolios,
+    total,
+    data,
   })
 })
 
@@ -93,8 +57,14 @@ const deletePortfolio = asyncHandler(async (req, res) => {
 })
 
 const createPortfolio = asyncHandler(async (req, res) => {
-  const { name, description, img, url } = req.body
+  const { name, description, url } = req.body
 
+  let img = ""
+  if (req.file) {
+    img = req.file.path
+  }
+
+  console.log(req.file)
   const portfolio = new Portfolio({
     name,
     description,
@@ -107,7 +77,12 @@ const createPortfolio = asyncHandler(async (req, res) => {
 })
 
 const updatePortfolio = asyncHandler(async (req, res) => {
-  const { name, description, img, url } = req.body
+  const { name, description, url } = req.body
+
+  let img = ""
+  if (req.file) {
+    img = req.file.path
+  }
 
   const portfolio = await Portfolio.findById(req.params.id)
 

@@ -1,5 +1,8 @@
 import express from "express"
 const router = express.Router()
+//import multer from "multer"
+import uploadMiddleware from "../middleware/uploadMiddleware.js"
+//var upload = multer({ dest: "uploads/" })
 import {
   getPortfolios,
   getPortfolioById,
@@ -12,12 +15,12 @@ import { protect, admin } from "../middleware/authMiddleware.js"
 router
   .route("/")
   .get(protect, admin, getPortfolios)
-  .post(protect, admin, createPortfolio)
+  .post(protect, admin, uploadMiddleware.single("img"), createPortfolio)
 
 router
   .route("/:id")
   .get(protect, admin, getPortfolioById)
   .delete(protect, admin, deletePortfolio)
-  .put(protect, admin, updatePortfolio)
+  .put(protect, admin, uploadMiddleware.single("img"), updatePortfolio)
 
 export default router

@@ -6,7 +6,7 @@ import {
   EditButton,
   BooleanField,
   DateField,
-  FunctionField,
+  TextField,
   Edit,
   SimpleForm,
   BooleanInput,
@@ -18,7 +18,7 @@ import MyUrlField from "../fields/MyUrlField.js"
 export const UserList = (props) => (
   <List {...props}>
     <Datagrid rowClick="edit">
-      <FunctionField label="Name" render={(record) => `${record.name}`} />
+      <TextField label="Name" source="name" />
       <MyUrlField source="email" />
       <BooleanField source="isAdmin" />
       <DateField source="createdAt" />

@@ -16,8 +16,6 @@ const httpClient = (url, options = {}) => {
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   getList: (resource, params) => {
-    //console.log(resource)
-
     const { page, perPage } = params.pagination
     const { field, order } = params.sort
     const query = {
@@ -27,13 +25,9 @@ export default {
       perPage,
       filter: JSON.stringify(params.filter),
     }
-    // const query = {
-    //   sort: JSON.stringify([field, order]),
-    //   range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
-    //   filter: JSON.stringify(params.filter),
-    // }
+
     const url = `${apiUrl}/${resource}?${stringify(query)}`
-    //const url = `${apiUrl}/test`
+
     return httpClient(url).then(({ headers, json }) => {
       return {
         data: json.data,
@@ -78,11 +72,34 @@ export default {
     }))
   },
 
-  update: (resource, params) =>
-    httpClient(`${apiUrl}/${resource}/${params.id}`, {
+  update: (resource, params) => {
+    const headers = new Headers({ Accept: "application/json" })
+    //headers.set("Content-Type", "multipart/form-data")
+
+    let formData = new FormData()
+
+    formData.append("resource", resource)
+    for (const k in params.data) {
+      if (k === "img") {
+        continue
+      }
+      formData.append(k, params.data[k])
+    }
+
+    if (params.data.img.rawFile) {
+      formData.append(
+        "img",
+        params.data.img.rawFile,
+        params.data.img.rawFile.name
+      )
+    }
+
+    return httpClient(`${apiUrl}/${resource}/${params.id}`, {
+      headers,
       method: "PUT",
-      body: JSON.stringify(params.data),
-    }).then(({ json }) => ({ data: json })),
+      body: formData,
+    }).then(({ json }) => ({ data: json }))
+  },
 
   updateMany: (resource, params) => {
     const query = {
@@ -94,13 +111,31 @@ export default {
     }).then(({ json }) => ({ data: json }))
   },
 
-  create: (resource, params) =>
-    httpClient(`${apiUrl}/${resource}`, {
+  create: (resource, params) => {
+    let formData = new FormData()
+
+    formData.append("resource", resource)
+    for (const k in params.data) {
+      if (k === "img") {
+        continue
+      }
+      formData.append(k, params.data[k])
+    }
+
+    if (params.data.img.rawFile) {
+      formData.append(
+        "img",
+        params.data.img.rawFile,
+        params.data.img.rawFile.name
+      )
+    }
+    return httpClient(`${apiUrl}/${resource}`, {
       method: "POST",
-      body: JSON.stringify(params.data),
+      body: formData,
     }).then(({ json }) => ({
       data: { ...params.data, id: json.id },
-    })),
+    }))
+  },
 
   delete: (resource, params) =>
     httpClient(`${apiUrl}/${resource}/${params.id}`, {

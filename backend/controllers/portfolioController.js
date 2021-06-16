@@ -1,8 +1,9 @@
 import asyncHandler from "express-async-handler"
 import Portfolio from "../models/portfolioModel.js"
+import { calcPages } from "../utils/generateToken.js"
 
 const getPortfolios = asyncHandler(async (req, res) => {
-  const { perPage, sortObj, filterObj, skip } = req.mongoParams
+  const { perPage, sortObj, filterObj, skip, page } = req.mongoParams
 
   const total = await Portfolio.countDocuments(filterObj)
   const data = await Portfolio.find(filterObj)
@@ -11,7 +12,10 @@ const getPortfolios = asyncHandler(async (req, res) => {
     .sort(sortObj)
 
   res.json({
+    page,
+    perPage,
     total,
+    pages: calcPages(perPage, total),
     data,
   })
 })

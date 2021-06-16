@@ -14,7 +14,7 @@ import { protect, admin } from "../middleware/authMiddleware.js"
 //protect, admin,
 router
   .route("/")
-  .get(protect, admin, getPortfolios)
+  .get(getPortfolios)
   .post(protect, admin, uploadMiddleware.single("img"), createPortfolio)
 
 router

@@ -5,14 +5,23 @@ import {
   PORTFOLIO_LIST_FAIL,
 } from "../constants/portfolioConstants"
 
+function getUrl() {
+  let url = process.env.REACT_APP_LOCAL_API_URL
+  if (process.env.REACT_APP_ENV !== "development") {
+    url = process.env.REACT_APP_API_URL
+  }
+  return url
+}
+
 export const listPortfolios =
   (page = "", perPage = "") =>
   async (dispatch) => {
     try {
       dispatch({ type: PORTFOLIO_LIST_REQUEST })
-
+      const url = getUrl()
+      console.log(url)
       const { data } = await axios.get(
-        `/api/portfolios?perPage=${perPage}&page=${page}`
+        `${url}/portfolios?perPage=${perPage}&page=${page}`
       )
 
       dispatch({

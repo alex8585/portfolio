@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler"
 import Portfolio from "../models/portfolioModel.js"
 import { calcPages } from "../utils/generateToken.js"
-
+import Tag from "../models/tagModel.js"
 const getPortfolios = asyncHandler(async (req, res) => {
   const { perPage, sortObj, filterObj, skip, page } = req.mongoParams
 
@@ -22,7 +22,7 @@ const getPortfolios = asyncHandler(async (req, res) => {
 
 const getPortfolioById = asyncHandler(async (req, res) => {
   const portfolio = await Portfolio.findById(req.params.id)
-
+  //console.log(portfolio)
   if (portfolio) {
     res.json(portfolio)
   } else {
@@ -61,15 +61,29 @@ const deletePortfolio = asyncHandler(async (req, res) => {
 })
 
 const createPortfolio = asyncHandler(async (req, res) => {
-  const { name, description, url } = req.body
+  const { name, description, url, tags: tagsIds } = req.body
 
   let img = ""
   if (req.file) {
     img = req.file.path
   }
+  let tagsObjArr
+  if (tagsIds) {
+    let tagsIdsArr = tagsIds.split(",")
+    //console.log(tagsIdsArr)
+    tagsObjArr = await Tag.find({ _id: { $in: tagsIdsArr } })
+    //console.log(tagsObjArr)
+    // tags = tagsObjArr.map((e) => {
+    //   return {
+    //     name: e.name,
+    //     _id: e.id,
+    //     id: e.id,
+    //   }
+    // })
+  }
 
-  console.log(req.file)
   const portfolio = new Portfolio({
+    tags: tagsObjArr,
     name,
     description,
     img,
@@ -81,16 +95,24 @@ const createPortfolio = asyncHandler(async (req, res) => {
 })
 
 const updatePortfolio = asyncHandler(async (req, res) => {
-  const { name, description, url } = req.body
+  const { name, description, url, tags: tagsIds } = req.body
 
   let img = ""
   if (req.file) {
     img = req.file.path
   }
 
+  let tagsObjArr
+  if (tagsIds) {
+    let tagsIdsArr = tagsIds.split(",")
+    tagsObjArr = await Tag.find({ _id: { $in: tagsIdsArr } })
+    // console.log(tagsObjArr)
+  }
+
   const portfolio = await Portfolio.findById(req.params.id)
 
   if (portfolio) {
+    portfolio.tags = tagsObjArr
     portfolio.name = name
     portfolio.description = description
     portfolio.img = img

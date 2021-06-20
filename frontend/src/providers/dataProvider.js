@@ -16,8 +16,14 @@ const httpClient = (url, options = {}) => {
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   getList: (resource, params) => {
-    const { page, perPage } = params.pagination
-    const { field, order } = params.sort
+    const pagination = params.pagination || {
+      page: 1,
+      perPage: 5,
+    }
+    const sort = params.sort || {}
+
+    const { page, perPage } = pagination
+    const { field, order } = sort
     const query = {
       sort: field,
       direction: order,
@@ -37,9 +43,10 @@ export default {
   },
 
   getOne: (resource, params) =>
-    httpClient(`${apiUrl}/${resource}/${params.id}`).then(({ json }) => ({
-      data: json,
-    })),
+    httpClient(`${apiUrl}/${resource}/${params.id}`).then(({ json }) => {
+      //console.log(json)
+      return { data: json }
+    }),
 
   getMany: (resource, params) => {
     const query = {
@@ -47,6 +54,7 @@ export default {
     }
     const url = `${apiUrl}/${resource}/by-ids/?${stringify(query)}`
     const r = httpClient(url).then(({ json }) => {
+      //console.log(json.data)
       return { data: json.data }
     })
 
@@ -122,7 +130,7 @@ export default {
       formData.append(k, params.data[k])
     }
 
-    if (params.data.img.rawFile) {
+    if (params.data.img && params.data.img.rawFile) {
       formData.append(
         "img",
         params.data.img.rawFile,

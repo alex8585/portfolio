@@ -24,6 +24,19 @@ const getTagById = asyncHandler(async (req, res) => {
   }
 })
 
+const getTagsByIds = asyncHandler(async (req, res) => {
+  const filter = JSON.parse(req.query.filter)
+  const ids = filter.id
+
+  // console.log(ids)
+
+  const data = await Tag.find({ _id: { $in: ids } })
+
+  res.json({
+    data,
+  })
+})
+
 const deleteTag = asyncHandler(async (req, res) => {
   let ids = false
   if (req.query.filter) {
@@ -79,4 +92,4 @@ const updateTag = asyncHandler(async (req, res) => {
   }
 })
 
-export { getTags, getTagById, deleteTag, createTag, updateTag }
+export { getTags, getTagById, deleteTag, createTag, updateTag, getTagsByIds }

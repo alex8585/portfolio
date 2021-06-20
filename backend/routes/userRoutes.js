@@ -20,7 +20,7 @@ router
   .get(protect, admin, getUserProfile)
   .put(protect, admin, updateUserProfile)
 
-router.route("/by-ids").get(protect, admin, getUsersByIds)
+router.route("/by-ids").get(getUsersByIds)
 
 router
   .route("/:id")

@@ -1,5 +1,27 @@
 import mongoose from "mongoose"
 
+const tagSchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+)
+
+tagSchema.virtual("id").get(function () {
+  return this._id.toHexString()
+})
+
+// tagSchema.virtual("id").get(function () {
+//   return this._id.toHexString()
+// })
+
 const portfolioSchema = mongoose.Schema(
   {
     name: {
@@ -15,6 +37,7 @@ const portfolioSchema = mongoose.Schema(
     url: {
       type: String,
     },
+    tags: [tagSchema],
   },
   {
     timestamps: true,

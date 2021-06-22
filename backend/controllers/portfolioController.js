@@ -95,18 +95,19 @@ const createPortfolio = asyncHandler(async (req, res) => {
 })
 
 const updatePortfolio = asyncHandler(async (req, res) => {
-  const { name, description, url, tags: tagsIds } = req.body
+  const { name, description, url, tags: tagsIds, delete_img } = req.body
 
+  console.log(delete_img)
   let img = ""
   if (req.file) {
     img = req.file.path
   }
-
+  console.log(tagsIds)
   let tagsObjArr
   if (tagsIds) {
     let tagsIdsArr = tagsIds.split(",")
     tagsObjArr = await Tag.find({ _id: { $in: tagsIdsArr } })
-    // console.log(tagsObjArr)
+    //console.log(tagsObjArr)
   }
 
   const portfolio = await Portfolio.findById(req.params.id)
@@ -115,7 +116,10 @@ const updatePortfolio = asyncHandler(async (req, res) => {
     portfolio.tags = tagsObjArr
     portfolio.name = name
     portfolio.description = description
-    portfolio.img = img
+
+    if (img || delete_img) {
+      portfolio.img = img
+    }
     portfolio.url = url
     const updatedPortfolio = await portfolio.save()
     res.json(updatedPortfolio)

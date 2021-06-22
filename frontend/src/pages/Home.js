@@ -35,6 +35,11 @@ import ShareIcon from "@material-ui/icons/Share"
 import { red } from "@material-ui/core/colors"
 import TopMenu from "../components/TopMenu"
 import Footer from "../components/Footer"
+
+import Chip from "@material-ui/core/Chip"
+import Paper from "@material-ui/core/Paper"
+import TagFacesIcon from "@material-ui/icons/TagFaces"
+
 const useStyles = makeStyles((theme) => ({
   "@global": {
     ul: {
@@ -62,8 +67,19 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
 
+  chip: {
+    margin: theme.spacing(0.5),
+  },
   root: {
     maxWidth: 345,
+  },
+  paper: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    listStyle: "none",
+    padding: theme.spacing(0.5),
+    margin: 0,
   },
   media: {
     height: 0,
@@ -102,6 +118,14 @@ const Home = ({ match, location, history }) => {
   useEffect(() => {
     dispatch(listPortfolios())
   }, [dispatch])
+
+  const [chipData, setChipData] = React.useState([
+    { key: 0, label: "Angular" },
+    { key: 1, label: "jQuery" },
+    { key: 2, label: "Polymer" },
+    { key: 3, label: "React" },
+    { key: 4, label: "Vue.js" },
+  ])
 
   return (
     <React.Fragment>
@@ -147,18 +171,25 @@ const Home = ({ match, location, history }) => {
                     color="textSecondary"
                     component="p"
                   >
-                    This impressive paella is a perfect party dish and a fun
-                    meal to cook together with your guests. Add 1 cup of frozen
-                    peas along with the mussels, if you like.
+                    {portfolio.description}
                   </Typography>
-                  <CardActions disableSpacing>
+                  {/* <CardActions disableSpacing>
                     <IconButton aria-label="add to favorites">
                       <FavoriteIcon />
                     </IconButton>
                     <IconButton aria-label="share">
                       <ShareIcon />
                     </IconButton>
-                  </CardActions>
+                  </CardActions> */}
+                  <Paper component="ul" className={classes.paper}>
+                    {portfolio.tags.map((tag) => {
+                      return (
+                        <li key={tag.id}>
+                          <Chip label={tag.name} className={classes.chip} />
+                        </li>
+                      )
+                    })}
+                  </Paper>
                   <Button
                     className={classes.button}
                     variant="contained"

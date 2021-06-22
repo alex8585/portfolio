@@ -94,7 +94,11 @@ export default {
       formData.append(k, params.data[k])
     }
 
-    if (params.data.img.rawFile) {
+    if (!params.data.img) {
+      formData.append("delete_img", true)
+    }
+
+    if (params.data.img && params.data.img.rawFile) {
       formData.append(
         "img",
         params.data.img.rawFile,

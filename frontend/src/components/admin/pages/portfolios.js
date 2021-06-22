@@ -1,7 +1,6 @@
-import React, { useEffect } from "react"
-import { useQuery, useGetOne } from "react-admin"
-import Select from "@material-ui/core/Select"
-import MenuItem from "@material-ui/core/MenuItem"
+import React from "react"
+//import { useQuery, useGetOne } from "react-admin"
+
 import {
   List,
   Datagrid,
@@ -14,12 +13,11 @@ import {
   ImageInput,
   ImageField,
   DateField,
-  AutocompleteArrayInput,
-  AutocompleteArrayInputChip,
+  //AutocompleteArrayInput,
   ReferenceArrayInput,
   SelectArrayInput,
-  SelectInput,
-  ChipField,
+  //useReferenceArrayInputContext,
+  //useMutation,
 } from "react-admin"
 
 export const PortfolioList = (props) => (
@@ -39,6 +37,67 @@ const PortfolioTitle = ({ record }) => {
   return <span>Tag {record ? `"${record.name}"` : ""}</span>
 }
 
+function formatTags(value) {
+  //console.log(value)
+  if (!value) return []
+  return value.map((v) => {
+    if (typeof v === "string") {
+      return v
+    }
+    return v.id
+  })
+}
+function formatImg(value) {
+  if (!value || typeof value === "string") {
+    return { src: value }
+  } else {
+    return value
+  }
+}
+
+export const PortfolioCreate = (props) => {
+  // const { data } = useQuery({
+  //   type: "getList",
+  //   resource: "tags",
+  //   payload: {},
+  // })
+
+  return (
+    <Create {...props}>
+      <SimpleForm>
+        <TextInput source="name" />
+        <ReferenceArrayInput
+          format={formatTags}
+          allowEmpty
+          label="Tags"
+          reference="tags"
+          source="tags"
+        >
+          <SelectArrayInput
+          //format={formatTags}
+          //optionText="name"
+          //optionValue="_id"
+          //source="tags"
+          //choices={data}
+          />
+        </ReferenceArrayInput>
+        <TextInput source="description" />
+
+        <ImageInput
+          source="img"
+          label="Img"
+          accept="image/*"
+          placeholder={<p>Drop your file here</p>}
+        >
+          <ImageField source="src" title="title" />
+        </ImageInput>
+
+        <TextInput source="url" />
+      </SimpleForm>
+    </Create>
+  )
+}
+
 export const PortfolioEdit = (props) => {
   // const { data, loaded } = useQuery({
   //   type: "getList",
@@ -49,27 +108,37 @@ export const PortfolioEdit = (props) => {
 
   //if (!loaded) return <span>Loading</span>
 
-  function formatImg(value) {
-    if (!value || typeof value === "string") {
-      return { src: value }
-    } else {
-      return value
-    }
-  }
+  //const [mutate] = useMutation()
+  // const save = useCallback(
+  //   async (values) => {
+  //     console.log(values)
+  //     values.tags = formatTags(values.tags)
+  //     try {
+  //       await mutate(
+  //         {
+  //           type: "update",
+  //           resource: "portfolios",
+  //           payload: { id: values.id, data: values },
+  //         },
+  //         { returnPromise: true }
+  //       )
+  //     } catch (error) {
+  //       if (error) {
+  //         return error
+  //       }
+  //     }
+  //   },
+  //   [mutate]
+  // )
 
-  function formatTags(value) {
-    if (!value) return []
-    return value.map((v) => {
-      if (typeof v === "string") {
-        return v
-      }
-      return v.id
-    })
+  const transform = (values) => {
+    values.tags = formatTags(values.tags)
+    return values
   }
 
   return (
-    <Edit title={<PortfolioTitle />} {...props}>
-      <SimpleForm>
+    <Edit transform={transform} title={<PortfolioTitle />} {...props}>
+      <SimpleForm redirect="/portfolios">
         <TextInput source="name" />
         <TextInput source="description" />
         <ReferenceArrayInput
@@ -79,16 +148,13 @@ export const PortfolioEdit = (props) => {
           reference="tags"
           source="tags"
         >
-          <SelectArrayInput
-            //options={{ value: ["60c5e6e3428873bbadd3bc9c"] }}
-            label="Tags"
-          />
+          <SelectArrayInput />
         </ReferenceArrayInput>
 
         <ImageInput
           format={formatImg}
-          source="fullImg"
-          label="Related pictures"
+          source="img"
+          label="Img"
           accept="image/*"
           placeholder={<p>Drop your file here</p>}
         >
@@ -98,38 +164,5 @@ export const PortfolioEdit = (props) => {
         <TextInput source="url" />
       </SimpleForm>
     </Edit>
-  )
-}
-
-export const PortfolioCreate = (props) => {
-  const { data } = useQuery({
-    type: "getList",
-    resource: "tags",
-    payload: {},
-  })
-  return (
-    <Create {...props}>
-      <SimpleForm>
-        <TextInput source="name" />
-        <AutocompleteArrayInput
-          optionText="name"
-          optionValue="_id"
-          source="tags"
-          choices={data}
-        />
-        <TextInput source="description" />
-
-        <ImageInput
-          source="img"
-          label="Related pictures"
-          accept="image/*"
-          placeholder={<p>Drop your file here</p>}
-        >
-          <ImageField source="src" title="title" />
-        </ImageInput>
-
-        <TextInput source="url" />
-      </SimpleForm>
-    </Create>
   )
 }

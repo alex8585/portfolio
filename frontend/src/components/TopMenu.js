@@ -2,7 +2,7 @@ import React from "react"
 import Typography from "@material-ui/core/Typography"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
-import Button from "@material-ui/core/Button"
+//import Button from "@material-ui/core/Button"
 import { makeStyles } from "@material-ui/core/styles"
 import Link from "@material-ui/core/Link"
 const useStyles = makeStyles((theme) => ({
@@ -36,42 +36,34 @@ const TopMenu = () => {
           noWrap
           className={classes.toolbarTitle}
         >
-          Company name
+          Alex85 programmer
         </Typography>
         <nav>
           <Link
             variant="button"
             color="textPrimary"
-            href="#"
+            href="/"
             className={classes.link}
           >
-            Features
+            Portfolio
           </Link>
           <Link
             variant="button"
             color="textPrimary"
-            href="#"
+            href="/about"
             className={classes.link}
           >
-            Enterprise
-          </Link>
-          <Link
-            variant="button"
-            color="textPrimary"
-            href="#"
-            className={classes.link}
-          >
-            Support
+            About me
           </Link>
         </nav>
-        <Button
+        {/* <Button
           href="#"
           color="primary"
           variant="outlined"
           className={classes.link}
         >
           Login
-        </Button>
+        </Button> */}
       </Toolbar>
     </AppBar>
   )

@@ -1,5 +1,5 @@
 const prepareQuery = (req, res, next) => {
-  const perPage = parseInt(req.query.perPage) || 5
+  const perPage = parseInt(req.query.perPage) || 20
   const page = parseInt(req.query.page) || 1
   const direction = req.query.direction
   const sort = req.query.sort
@@ -12,6 +12,8 @@ const prepareQuery = (req, res, next) => {
     } else {
       sortObj[sort] = -1
     }
+  } else {
+    sortObj["order_number"] = 1
   }
 
   const filterObj = {}

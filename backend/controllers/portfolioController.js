@@ -61,8 +61,8 @@ const deletePortfolio = asyncHandler(async (req, res) => {
 })
 
 const createPortfolio = asyncHandler(async (req, res) => {
-  const { name, description, url, tags: tagsIds } = req.body
-
+  const { name, description, url, tags: tagsIds, order_number } = req.body
+  //description ==  | ""
   let img = ""
   if (req.file) {
     img = req.file.path
@@ -83,6 +83,7 @@ const createPortfolio = asyncHandler(async (req, res) => {
   }
 
   const portfolio = new Portfolio({
+    order_number,
     tags: tagsObjArr,
     name,
     description,
@@ -95,9 +96,17 @@ const createPortfolio = asyncHandler(async (req, res) => {
 })
 
 const updatePortfolio = asyncHandler(async (req, res) => {
-  const { name, description, url, tags: tagsIds, delete_img } = req.body
+  const {
+    name,
+    description,
+    url,
+    tags: tagsIds,
+    delete_img,
+    order_number,
+  } = req.body
 
-  console.log(delete_img)
+  //description = description | ""
+  //console.log(delete_img)
   let img = ""
   if (req.file) {
     img = req.file.path
@@ -116,7 +125,7 @@ const updatePortfolio = asyncHandler(async (req, res) => {
     portfolio.tags = tagsObjArr
     portfolio.name = name
     portfolio.description = description
-
+    portfolio.order_number = order_number
     if (img || delete_img) {
       portfolio.img = img
     }

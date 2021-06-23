@@ -1,8 +1,8 @@
 import React from "react"
-import Link from "@material-ui/core/Link"
+//import Link from "@material-ui/core/Link"
 import Box from "@material-ui/core/Box"
 import Copyright from "../components/Copyright"
-import Typography from "@material-ui/core/Typography"
+//import Typography from "@material-ui/core/Typography"
 import Container from "@material-ui/core/Container"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
@@ -19,41 +19,41 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const footers = [
-  {
-    title: "Company",
-    description: ["Team", "History", "Contact us", "Locations"],
-  },
-  {
-    title: "Features",
-    description: [
-      "Cool stuff",
-      "Random feature",
-      "Team feature",
-      "Developer stuff",
-      "Another one",
-    ],
-  },
-  {
-    title: "Resources",
-    description: [
-      "Resource",
-      "Resource name",
-      "Another resource",
-      "Final resource",
-    ],
-  },
-  {
-    title: "Legal",
-    description: ["Privacy policy", "Terms of use"],
-  },
-]
+// const footers = [
+//   {
+//     title: "Company",
+//     description: ["Team", "History", "Contact us", "Locations"],
+//   },
+//   {
+//     title: "Features",
+//     description: [
+//       "Cool stuff",
+//       "Random feature",
+//       "Team feature",
+//       "Developer stuff",
+//       "Another one",
+//     ],
+//   },
+//   {
+//     title: "Resources",
+//     description: [
+//       "Resource",
+//       "Resource name",
+//       "Another resource",
+//       "Final resource",
+//     ],
+//   },
+//   {
+//     title: "Legal",
+//     description: ["Privacy policy", "Terms of use"],
+//   },
+// ]
 const Footer = () => {
   const classes = useStyles()
   return (
     <Container maxWidth="md" component="footer" className={classes.footer}>
       <Grid container spacing={4} justify="space-evenly">
-        {footers.map((footer) => (
+        {/* {footers.map((footer) => (
           <Grid item xs={6} sm={3} key={footer.title}>
             <Typography variant="h6" color="textPrimary" gutterBottom>
               {footer.title}
@@ -68,7 +68,7 @@ const Footer = () => {
               ))}
             </ul>
           </Grid>
-        ))}
+        ))} */}
       </Grid>
       <Box mt={5}>
         <Copyright />

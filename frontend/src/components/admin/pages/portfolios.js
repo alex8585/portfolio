@@ -24,6 +24,7 @@ export const PortfolioList = (props) => (
   <List {...props}>
     <Datagrid rowClick="edit">
       <TextField source="name" />
+      <TextField source="order_number" />
       <TextField source="description" />
       <ImageField label="Image" source="fullImg" />
       <TextField source="url" />
@@ -66,6 +67,7 @@ export const PortfolioCreate = (props) => {
     <Create {...props}>
       <SimpleForm>
         <TextInput source="name" />
+        <TextInput source="order_number" />
         <ReferenceArrayInput
           format={formatTags}
           allowEmpty
@@ -140,8 +142,10 @@ export const PortfolioEdit = (props) => {
     <Edit transform={transform} title={<PortfolioTitle />} {...props}>
       <SimpleForm redirect="/portfolios">
         <TextInput source="name" />
+        <TextInput source="order_number" />
         <TextInput source="description" />
         <ReferenceArrayInput
+          sort={{ field: "order_number", order: "ASC" }}
           format={formatTags}
           allowEmpty
           label="Tags"

@@ -19,7 +19,7 @@ export const listPortfolios =
     try {
       dispatch({ type: PORTFOLIO_LIST_REQUEST })
       const url = getUrl()
-      console.log(url)
+      //console.log(url)
       const { data } = await axios.get(
         `${url}/portfolios?perPage=${perPage}&page=${page}`
       )

@@ -85,10 +85,10 @@ export default {
     //headers.set("Content-Type", "multipart/form-data")
 
     let formData = new FormData()
-
+    console.log(params.data)
     formData.append("resource", resource)
     for (const k in params.data) {
-      if (k === "img") {
+      if (k === "img" || params.data[k] === null) {
         continue
       }
       formData.append(k, params.data[k])

@@ -67,9 +67,10 @@ const deleteTag = asyncHandler(async (req, res) => {
 })
 
 const createTag = asyncHandler(async (req, res) => {
-  const { name } = req.body
+  const { name, order_number } = req.body
 
   const tag = new Tag({
+    order_number,
     name,
   })
 
@@ -78,11 +79,12 @@ const createTag = asyncHandler(async (req, res) => {
 })
 
 const updateTag = asyncHandler(async (req, res) => {
-  const { name } = req.body
+  const { name, order_number } = req.body
 
   const tag = await Tag.findById(req.params.id)
 
   if (tag) {
+    tag.order_number = order_number
     tag.name = name
     const updatedTag = await tag.save()
     res.json(updatedTag)

@@ -6,6 +6,9 @@ const tagSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    order_number: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

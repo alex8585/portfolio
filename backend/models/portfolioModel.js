@@ -6,6 +6,9 @@ const tagSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    order_number: {
+      type: Number,
+    },
   },
   {
     timestamps: true,
@@ -38,6 +41,9 @@ const portfolioSchema = mongoose.Schema(
       type: String,
     },
     tags: [tagSchema],
+    order_number: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

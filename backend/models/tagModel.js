@@ -21,6 +21,9 @@ tagSchema.virtual("id").get(function () {
   return this._id.toHexString()
 })
 
+export {tagSchema}
+
+
 const Tag = mongoose.model("Tag", tagSchema)
 
 export default Tag

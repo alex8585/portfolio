@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler"
 import Portfolio from "../models/portfolioModel.js"
 import { calcPages } from "../utils/generateToken.js"
-import Tag from "../models/tagModel.js"
+//import Tag from "../models/tagModel.js"
 const getPortfolios = asyncHandler(async (req, res) => {
   const { perPage, sortObj, filterObj, skip, page } = req.mongoParams
 
@@ -10,7 +10,7 @@ const getPortfolios = asyncHandler(async (req, res) => {
     .limit(perPage)
     .skip(skip)
     .sort(sortObj)
-
+    .populate("tags")
   res.json({
     page,
     perPage,
@@ -62,29 +62,16 @@ const deletePortfolio = asyncHandler(async (req, res) => {
 
 const createPortfolio = asyncHandler(async (req, res) => {
   const { name, description, url, tags: tagsIds, order_number } = req.body
-  //description ==  | ""
+
   let img = ""
   if (req.file) {
     img = req.file.path
   }
-  let tagsObjArr
-  if (tagsIds) {
-    let tagsIdsArr = tagsIds.split(",")
-    //console.log(tagsIdsArr)
-    tagsObjArr = await Tag.find({ _id: { $in: tagsIdsArr } })
-    //console.log(tagsObjArr)
-    // tags = tagsObjArr.map((e) => {
-    //   return {
-    //     name: e.name,
-    //     _id: e.id,
-    //     id: e.id,
-    //   }
-    // })
-  }
+  let tags = tagsIds ? tagsIds.split(",") : []
 
   const portfolio = new Portfolio({
     order_number,
-    tags: tagsObjArr,
+    tags: tags,
     name,
     description,
     img,
@@ -105,24 +92,21 @@ const updatePortfolio = asyncHandler(async (req, res) => {
     order_number,
   } = req.body
 
-  //description = description | ""
-  //console.log(delete_img)
   let img = ""
   if (req.file) {
     img = req.file.path
   }
-  console.log(tagsIds)
-  let tagsObjArr
-  if (tagsIds) {
-    let tagsIdsArr = tagsIds.split(",")
-    tagsObjArr = await Tag.find({ _id: { $in: tagsIdsArr } })
-    //console.log(tagsObjArr)
-  }
+  let tags = tagsIds ? tagsIds.split(",") : []
+
+  // let tagsObjArr
+  // if (tagsIds) {
+  //   tagsObjArr = await Tag.find({ _id: { $in: tagsIdsArr } })
+  // }
 
   const portfolio = await Portfolio.findById(req.params.id)
 
   if (portfolio) {
-    portfolio.tags = tagsObjArr
+    portfolio.tags = tags
     portfolio.name = name
     portfolio.description = description
     portfolio.order_number = order_number

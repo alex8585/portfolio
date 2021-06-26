@@ -4,7 +4,8 @@ import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 //import Button from "@material-ui/core/Button"
 import { makeStyles } from "@material-ui/core/styles"
-import Link from "@material-ui/core/Link"
+//import Link from "@material-ui/core/Link"
+import { NavLink } from "react-router-dom"
 const useStyles = makeStyles((theme) => ({
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -16,7 +17,15 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   link: {
-    margin: theme.spacing(1, 1.5),
+    //margin: theme.spacing(1, 1.5),
+    fontSize: "0.875rem",
+    fontWeight: "600",
+    lineHeight: "1.75",
+    letterSpacing: "0.02857em",
+    textTransform: "uppercase",
+    color: "rgba(0, 0, 0, 0.87)",
+    margin: "8px 12px",
+    textDecoration: "none",
   },
 }))
 
@@ -39,22 +48,22 @@ const TopMenu = () => {
           Alex85 programmer
         </Typography>
         <nav>
-          <Link
+          <NavLink
             variant="button"
             color="textPrimary"
-            href="/"
+            to="/"
             className={classes.link}
           >
             Portfolio
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             variant="button"
             color="textPrimary"
-            href="/about"
+            to="/about"
             className={classes.link}
           >
             About me
-          </Link>
+          </NavLink>
         </nav>
         {/* <Button
           href="#"

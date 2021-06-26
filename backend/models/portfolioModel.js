@@ -1,29 +1,6 @@
 import mongoose from "mongoose"
-
-const tagSchema = mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    order_number: {
-      type: Number,
-    },
-  },
-  {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  }
-)
-
-tagSchema.virtual("id").get(function () {
-  return this._id.toHexString()
-})
-
-// tagSchema.virtual("id").get(function () {
-//   return this._id.toHexString()
-// })
+const Schema = mongoose.Schema
+//import { tagSchema } from "./tagModel.js"
 
 const portfolioSchema = mongoose.Schema(
   {
@@ -40,7 +17,8 @@ const portfolioSchema = mongoose.Schema(
     url: {
       type: String,
     },
-    tags: [tagSchema],
+    tags: [{ type: Schema.Types.ObjectId, ref: "Tag" }],
+    //tags: [tagSchema],
     order_number: {
       type: Number,
     },

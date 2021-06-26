@@ -99,6 +99,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: red[500],
   },
   button: {
+    marginTop: "5px",
     width: "100%",
     textAlign: "center",
   },
@@ -151,7 +152,7 @@ const Home = ({ match, location, history }) => {
                 <CardHeader title={portfolio.name} subheader="" />
                 <CardMedia
                   className={classes.media}
-                  image={portfolio.fullImg}
+                  image={portfolio.img}
                   title="Paella dish"
                 />
                 <CardContent>
@@ -183,15 +184,28 @@ const Home = ({ match, location, history }) => {
                         )
                       })}
                   </Paper>
-                  <Button
-                    target="_blank"
-                    className={classes.button}
-                    variant="contained"
-                    color="primary"
-                    href={portfolio.url}
-                  >
-                    View
-                  </Button>
+                  {portfolio.url.indexOf("github") !== -1 && (
+                    <Button
+                      target="_blank"
+                      className={classes.button}
+                      variant="contained"
+                      color="secondary"
+                      href={portfolio.url}
+                    >
+                      Github
+                    </Button>
+                  )}
+                  {portfolio.url.indexOf("github") === -1 && (
+                    <Button
+                      target="_blank"
+                      className={classes.button}
+                      variant="contained"
+                      color="primary"
+                      href={portfolio.url}
+                    >
+                      View
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </Grid>

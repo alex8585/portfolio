@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1, 1.5),
   },
   heroContent: {
-    padding: theme.spacing(8, 0, 6),
+    padding: theme.spacing(3, 0, 3),
   },
   cardHeader: {
     backgroundColor:
@@ -128,7 +128,7 @@ const Home = ({ match, location, history }) => {
       <Container maxWidth="sm" component="main" className={classes.heroContent}>
         <Typography
           component="h1"
-          variant="h2"
+          variant="h4"
           align="center"
           color="textPrimary"
           gutterBottom

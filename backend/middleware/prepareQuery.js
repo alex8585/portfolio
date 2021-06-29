@@ -26,8 +26,21 @@ const prepareQuery = (req, res, next) => {
       }
 
       for (const property in filter) {
-        if (property == "userId" || property == "user" || q) continue
         const val = filter[property]
+
+        if (property == "tags") {
+          let tagsFilter = val.split(",")
+          filterObj["tags"] = { $in: tagsFilter }
+        }
+
+        if (
+          property == "tags" ||
+          property == "userId" ||
+          property == "user" ||
+          q
+        )
+          continue
+
         filterObj[property] = { $regex: `${val}`, $options: "i" }
       }
     } else {
@@ -39,7 +52,7 @@ const prepareQuery = (req, res, next) => {
       ]
     }
   }
-
+  //console.log(filterObj)
   req.mongoParams = {
     skip: perPage * (page - 1),
     perPage,

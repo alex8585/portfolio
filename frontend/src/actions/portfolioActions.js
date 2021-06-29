@@ -14,14 +14,22 @@ function getUrl() {
 }
 
 export const listPortfolios =
-  (page = "", perPage = "") =>
+  (page = "", perPage = "", tags = []) =>
   async (dispatch) => {
+    let tagsIds = tags.filter((tag) => tag.active).map((tag) => tag.id)
+
+    let filter = ""
+    if (tagsIds.length) {
+      filter = { tags: tagsIds.join(",") }
+      filter = JSON.stringify(filter)
+    }
+
     try {
       dispatch({ type: PORTFOLIO_LIST_REQUEST })
       const url = getUrl()
       console.log(url)
       const { data } = await axios.get(
-        `${url}/portfolios?perPage=${perPage}&page=${page}`
+        `${url}/portfolios?perPage=${perPage}&page=${page}&filter=${filter}`
       )
 
       dispatch({

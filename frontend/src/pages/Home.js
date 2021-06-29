@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
-//import CardActions from "@material-ui/core/CardActions"
+
 import CardContent from "@material-ui/core/CardContent"
 import CardHeader from "@material-ui/core/CardHeader"
 import CssBaseline from "@material-ui/core/CssBaseline"
@@ -14,31 +14,20 @@ import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 
 import { useDispatch, useSelector } from "react-redux"
-//import { useParams, useLocation } from "react-router-dom"
-//import { listProducts } from "../actions/productActions"
-//import { useQuery } from "../hooks/utils.js"
+
+import { listTags, filterByTags } from "../actions/tagActions"
 
 import { listPortfolios } from "../actions/portfolioActions"
-
-//import clsx from "clsx"
+import Pagination from "@material-ui/lab/Pagination"
 
 import CardMedia from "@material-ui/core/CardMedia"
 
-//import Collapse from "@material-ui/core/Collapse"
-//import Avatar from "@material-ui/core/Avatar"
-//import IconButton from "@material-ui/core/IconButton"
-
-//import FavoriteIcon from "@material-ui/icons/Favorite"
-//import ShareIcon from "@material-ui/icons/Share"
-//import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-//import MoreVertIcon from "@material-ui/icons/MoreVert"
 import { red } from "@material-ui/core/colors"
 import TopMenu from "../components/TopMenu"
 import Footer from "../components/Footer"
 
 import Chip from "@material-ui/core/Chip"
 import Paper from "@material-ui/core/Paper"
-//import TagFacesIcon from "@material-ui/icons/TagFaces"
 
 const useStyles = makeStyles((theme) => ({
   "@global": {
@@ -48,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
       listStyle: "none",
     },
   },
+
   link: {
     margin: theme.spacing(1, 1.5),
   },
@@ -80,6 +70,9 @@ const useStyles = makeStyles((theme) => ({
     listStyle: "none",
     padding: theme.spacing(0.5),
     margin: 0,
+    "& .active .MuiButtonBase-root": {
+      backgroundColor: "rgb(144, 131, 112)",
+    },
   },
   media: {
     height: 0,
@@ -103,6 +96,19 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     textAlign: "center",
   },
+  paginatorContainer: {
+    display: "flex",
+    marginTop: 10,
+  },
+  pagination: {
+    margin: "0 auto",
+    "& ul": {
+      listStyle: "none",
+      padding: 0,
+      margin: 0,
+      display: "flex",
+    },
+  },
 }))
 
 const Home = ({ match, location, history }) => {
@@ -113,12 +119,25 @@ const Home = ({ match, location, history }) => {
   //let query = useQuery()
 
   const portfolioList = useSelector((state) => state.portfolioList)
-  const { data } = portfolioList
-  console.log(data)
+  const { data: tags, loading: tagsloading } = useSelector(
+    (state) => state.tagList
+  )
+  const { data, page, pages, loading } = portfolioList
 
   useEffect(() => {
-    dispatch(listPortfolios())
+    dispatch(listPortfolios(1, 6))
+    dispatch(listTags(1))
   }, [dispatch])
+
+  let handleChangePage = (event, value) => {
+    dispatch(listPortfolios(value, 6, tags))
+  }
+  let handletagFilter = (id) => {
+    dispatch(filterByTags(id))
+    dispatch(listPortfolios(1, 6, tags))
+  }
+
+  if (loading || tagsloading) return "loading..."
 
   return (
     <React.Fragment>
@@ -144,6 +163,21 @@ const Home = ({ match, location, history }) => {
       </Container>
       {/* End hero unit */}
       <Container maxWidth="md" component="main">
+        <ul component="ul" className={classes.paper}>
+          {tags
+            .sort((a, b) => (a.order_number > b.order_number ? 1 : -1))
+            .map((tag) => {
+              return (
+                <li key={tag.id} className={tag.active ? "active" : ""}>
+                  <Chip
+                    label={tag.name}
+                    onClick={() => handletagFilter(tag.id)}
+                    className={classes.chip}
+                  />
+                </li>
+              )
+            })}
+        </ul>
         <Grid container spacing={5} alignItems="flex-end">
           {data.map((portfolio) => (
             // Enterprise card is full width at sm breakpoint
@@ -211,6 +245,14 @@ const Home = ({ match, location, history }) => {
             </Grid>
           ))}
         </Grid>
+        <div className={classes.paginatorContainer}>
+          <Pagination
+            page={page}
+            count={pages}
+            onChange={handleChangePage}
+            className={classes.pagination}
+          />
+        </div>
       </Container>
 
       <Footer />

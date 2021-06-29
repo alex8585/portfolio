@@ -13,7 +13,7 @@ import uploadMiddleware from "../middleware/uploadMiddleware.js"
 
 router
   .route("/")
-  .get(protect, admin, getTags)
+  .get(getTags)
   .post(protect, admin, uploadMiddleware.single("img"), createTag)
 
 router.route("/by-ids").get(getTagsByIds)

@@ -2,18 +2,16 @@ import React, { useEffect } from "react"
 
 import CssBaseline from "@material-ui/core/CssBaseline"
 import Grid from "@material-ui/core/Grid"
-//import Paper from "@material-ui/core/Paper"
+
 import Typography from "@material-ui/core/Typography"
 
 import { makeStyles } from "@material-ui/core/styles"
-//import Container from "@material-ui/core/Container"
 
 import { useDispatch, useSelector } from "react-redux"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemAvatar from "@material-ui/core/ListItemAvatar"
-import ListItemIcon from "@material-ui/core/ListItemIcon"
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
+
 import ListItemText from "@material-ui/core/ListItemText"
 
 import { listPortfolios } from "../actions/portfolioActions"

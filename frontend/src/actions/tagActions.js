@@ -1,18 +1,11 @@
-import axios from "axios"
+import { getList } from "../providers/frontendProvider.js"
+
 import {
   TAG_LIST_REQUEST,
   TAG_LIST_SUCCESS,
   TAG_LIST_FAIL,
   SET_ACTIVE_TAG,
 } from "../constants/tagConstants"
-
-function getUrl() {
-  let url = process.env.REACT_APP_LOCAL_API_URL
-  if (process.env.REACT_APP_ENV !== "development") {
-    url = process.env.REACT_APP_API_URL
-  }
-  return url
-}
 
 export const filterByTags = (id) => async (dispatch) => {
   try {
@@ -28,11 +21,12 @@ export const listTags =
   async (dispatch) => {
     try {
       dispatch({ type: TAG_LIST_REQUEST })
-      const url = getUrl()
+      let params = {
+        perPage,
+        page,
+      }
+      let { data } = await getList("tags", params)
 
-      const { data } = await axios.get(
-        `${url}/tags?perPage=${perPage}&page=${page}`
-      )
       dispatch({
         type: TAG_LIST_SUCCESS,
         payload: data,

@@ -1,25 +1,32 @@
+import produce from "immer"
 import {
   PORTFOLIO_LIST_REQUEST,
   PORTFOLIO_LIST_SUCCESS,
   PORTFOLIO_LIST_FAIL,
 } from "../constants/portfolioConstants"
-
-export const portfolioListReducer = (state = { data: [] }, action) => {
+const INITIAL_STATE = {
+  data: [],
+  loading: false,
+}
+export const portfolioListReducer = produce((draft, action) => {
   switch (action.type) {
     case PORTFOLIO_LIST_REQUEST:
-      return { loading: true, data: [] }
+      draft.loading = true
+      draft.data = []
+      break
     case PORTFOLIO_LIST_SUCCESS:
-      return {
-        loading: false,
-        data: action.payload.data,
-        pages: action.payload.pages,
-        page: action.payload.page,
-        total: action.payload.total,
-        perPage: action.payload.perPage,
-      }
+      draft.loading = false
+      draft.data = action.payload.data
+      draft.pages = action.payload.pages
+      draft.page = action.payload.page
+      draft.total = action.payload.total
+      draft.perPage = action.payload.perPage
+      break
     case PORTFOLIO_LIST_FAIL:
-      return { loading: false, error: action.payload }
+      draft.loading = false
+      draft.error = action.payload
+      break
     default:
-      return state
+      return
   }
-}
+}, INITIAL_STATE)

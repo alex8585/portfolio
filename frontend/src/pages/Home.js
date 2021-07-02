@@ -129,16 +129,20 @@ const Home = ({ match, location, history }) => {
     dispatch(listTags(1))
   }, [dispatch])
 
+  useEffect(() => {
+    dispatch(listPortfolios(1, 6, tags))
+  }, [dispatch, tags])
+
   let handleChangePage = (event, value) => {
     dispatch(listPortfolios(value, 6, tags))
   }
+
   let handletagFilter = (id) => {
     dispatch(filterByTags(id))
-    dispatch(listPortfolios(1, 6, tags))
+    //dispatch(listPortfolios(1, 6, tags))
   }
 
   if (loading || tagsloading) return "loading..."
-
   return (
     <React.Fragment>
       <CssBaseline />
@@ -163,8 +167,8 @@ const Home = ({ match, location, history }) => {
       </Container>
       {/* End hero unit */}
       <Container maxWidth="md" component="main">
-        <ul component="ul" className={classes.paper}>
-          {tags
+        <ul className={classes.paper}>
+          {[...tags]
             .sort((a, b) => (a.order_number > b.order_number ? 1 : -1))
             .map((tag) => {
               return (
@@ -206,7 +210,7 @@ const Home = ({ match, location, history }) => {
                     </IconButton>
                   </CardActions> */}
                   <Paper component="ul" className={classes.paper}>
-                    {portfolio.tags
+                    {[...portfolio.tags]
                       .sort((a, b) =>
                         a.order_number > b.order_number ? 1 : -1
                       )

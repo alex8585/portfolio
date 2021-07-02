@@ -1,3 +1,4 @@
+import produce from "immer"
 import {
   TAG_LIST_REQUEST,
   TAG_LIST_SUCCESS,
@@ -5,35 +6,39 @@ import {
   SET_ACTIVE_TAG,
 } from "../constants/tagConstants"
 
-export const tagListReducer = (state = { data: [] }, action) => {
+const INITIAL_STATE = {
+  data: [],
+}
+export const tagListReducer = produce((draft, action) => {
   switch (action.type) {
     case SET_ACTIVE_TAG:
       let id = action.payload
-      let newData = state.data.map((tag) => {
+      let newData = draft.data.map((tag) => {
         if (tag.id === id) {
           tag.active = !tag.active
         }
         return tag
       })
-      //console.log(newData)
-      return {
-        data: newData,
-        ...state,
-      }
+      draft.data = newData
+      break
     case TAG_LIST_REQUEST:
-      return { loading: true, data: [] }
+      draft.loding = true
+      draft.data = []
+      break
     case TAG_LIST_SUCCESS:
-      return {
-        loading: false,
-        data: action.payload.data,
-        pages: action.payload.pages,
-        page: action.payload.page,
-        total: action.payload.total,
-        perPage: action.payload.perPage,
-      }
+      draft.loading = false
+      draft.data = action.payload.data
+      draft.pages = action.payload.pages
+      draft.ipage = action.payload.page
+      draft.total = action.payload.total
+      draft.perPage = action.payload.perPage
+      break
     case TAG_LIST_FAIL:
-      return { loading: false, error: action.payload }
+      draft.loading = false
+      draft.error = "action.payload"
+      break
     default:
-      return state
+      break
   }
-}
+  return
+}, INITIAL_STATE)

@@ -1,17 +1,9 @@
-import axios from "axios"
+import { getList } from "../providers/frontendProvider.js"
 import {
   PORTFOLIO_LIST_REQUEST,
   PORTFOLIO_LIST_SUCCESS,
   PORTFOLIO_LIST_FAIL,
 } from "../constants/portfolioConstants"
-
-function getUrl() {
-  let url = process.env.REACT_APP_LOCAL_API_URL
-  if (process.env.REACT_APP_ENV !== "development") {
-    url = process.env.REACT_APP_API_URL
-  }
-  return url
-}
 
 export const listPortfolios =
   (page = "", perPage = "", tags = []) =>
@@ -26,12 +18,12 @@ export const listPortfolios =
 
     try {
       dispatch({ type: PORTFOLIO_LIST_REQUEST })
-      const url = getUrl()
-      console.log(url)
-      const { data } = await axios.get(
-        `${url}/portfolios?perPage=${perPage}&page=${page}&filter=${filter}`
-      )
-
+      let params = {
+        perPage,
+        page,
+        filter,
+      }
+      let { data } = await getList("portfolios", params)
       dispatch({
         type: PORTFOLIO_LIST_SUCCESS,
         payload: data,
@@ -46,3 +38,4 @@ export const listPortfolios =
       })
     }
   }
+export default listPortfolios
